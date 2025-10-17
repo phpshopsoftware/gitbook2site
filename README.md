@@ -36,3 +36,7 @@ GitBook2Site - это простой PHP скрипт на основе регу
 
 ## Минусы
 * Поиск данных пока уступает GitBook
+
+## Демо
+* Исходник - https://docs.phpshop.ru
+* Результат работы GitBook2Site -  https://wiki.phpshop.ru
