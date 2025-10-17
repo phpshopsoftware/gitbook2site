@@ -1,0 +1,171 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    margin-bottom: 10px;
+    font-size: 16px;
+    line-height: 24px;
+    font-family: "Inter", "Inter Fallback", system-ui, arial;
+    color: rgb(28, 29, 30);
+}
+
+h1 {
+    font-size: 30px;
+}
+
+h2 {
+    font-size: 24px;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+
+.popover-content {
+    font-size: 14px;
+    line-height: 20px;
+    font-family: "Inter", "Inter Fallback", system-ui, arial;
+    color: rgb(28, 29, 30);
+}
+
+a .glyphicon{
+    padding-right: 3px;
+    padding-top:5px;
+}
+#menu{
+    max-height: calc(100vh - 100px);
+    overflow-y:scroll; 
+}
+
+#menu h2{
+    font-size:17px;
+}
+
+#menu ul, #mobmenu ul {
+    list-style-type: none; 
+}
+#mobmenu h2, #menu h2{
+    font-size:12px;
+    text-transform: uppercase;
+    padding-left:25px;
+    font-weight: bold;
+    color: rgb(28, 29, 30);
+}
+
+#mobmenu a,#menu a{
+    color: oklab(0.230081 -0.00092198 -0.00227435 / 0.64);
+}
+.popover-content .nav > li > a {
+    position: relative;
+    display: block;
+    padding: 5px 5px 5px 5px;
+}
+
+.popover-content .nav > li > a > div{
+    color: rgb(28, 29, 30);
+}
+
+.nav > li > a {
+    position: relative;
+    display: block;
+    padding: 3px 5px 5px 20px;
+    font-size: 15px;
+}
+
+
+.navbar-toggle {
+    margin-left: 15px;
+    float: left;
+}
+
+#search{
+    margin-right: 15px;
+    float: right;
+}
+
+#content{
+    padding-left:45px;
+    padding-right:45px;
+
+}
+
+
+#content > h1:nth-of-type(2), #content > hr:first-of-type{
+    display: none;
+}
+
+.alert{
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+.logo{
+    color: rgb(28, 29, 30);
+    font-size: 24px;
+}
+.logo:hover{
+    text-decoration: none;
+    color: rgb(28, 29, 30);
+}
+
+mark{
+    background-color: unset;
+
+}
+
+.nav-pills mark{
+    color: oklab(0.230081 -0.00092198 -0.00227435 / 0.64)!important;
+}
+
+.nav-pills .nav-pills{
+    margin-left:20px;
+}
+
+#menu a.link, #mobmenu a.link{
+    display: none;
+}
+
+a.link{
+    color: #ccc;
+}
+
+#main{
+    margin-top:80px;
+}
+
+#content-menu a{
+    color: oklab(0.230081 -0.00092198 -0.00227435 / 0.64);
+    font-weight: 400;
+    line-height: 25px;
+    font-size: 15px;
+}
+
+.menu-2{
+    margin-left:15px
+}
+
+.panel a{
+    text-transform: capitalize;
+}
+
+ul.nav-stacked ul.nav-stacked{
+    display: none;
+}
+
+@media (max-width: 768px) {
+
+    a.link {
+        display: none;
+    }
+
+    #main{
+        margin-top:0px;
+    }
+
+    #content{
+        padding: 15px;
+    }
+
+}
