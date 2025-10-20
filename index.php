@@ -1,8 +1,15 @@
 <?php
 
+/**
+ * GitBook2Site
+ * @author PHPShop Software
+ * @version 1.0
+ * @copyright ИП Туренко Д.Л. 
+ */
+
 include "./config.php";
 include "./lib/parsedown/Parsedown.php";
-//include "./lib/parsedown/ParsedownExtra.php";
+
 $sourse = $_CONFIG['sourse'];
 $path = parse_url($_SERVER['REQUEST_URI'])['path'];
 
@@ -10,7 +17,15 @@ $path = parse_url($_SERVER['REQUEST_URI'])['path'];
 $Parsedown = new Parsedown();
 
 if ($path == '/') {
+
     $filename = $sourse . '/README.md';
+
+    if (!file_exists($sourse . '/README.md'))
+        $filename = './README.md';
+}
+elseif ($path == '/about') {
+    $sourse = '';
+    $filename = 'README.md';
 } else {
 
     if (file_exists($sourse . $path . '/README.md'))
@@ -33,7 +48,8 @@ if (file_exists($sourse . $path . '/../README.md')) {
         $breadcrumb_name = $matchs[1][0];
     }
 
-    $breadcrumb_parent = '<li><a href="' . $path . '/../">' . str_replace(['# '], [''], $breadcrumb_name) . '</a></li>';
+    if ($path != '/')
+        $breadcrumb_parent = '<li><a href="' . $path . '/../">' . str_replace(['# '], [''], $breadcrumb_name) . '</a></li>';
 }
 
 // title
@@ -77,7 +93,7 @@ if (preg_match('/---(.*?)---/s', $content, $matchs)) {
     $content = str_replace($matchs[0], $element, $content);
 }
 
-$menu_content = file_get_contents($sourse . '/SUMMARY.md');
+$menu_content = @file_get_contents($sourse . '/SUMMARY.md');
 $menu_content = str_replace(['.md', '(', 'Table of contents', 'README'], ['', '(/', '', ''], $menu_content);
 
 $html = $Parsedown->text($content);
