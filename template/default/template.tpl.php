@@ -5,7 +5,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title><?php echo $title; ?> | <?php echo $_CONFIG['brand']; ?></title>
-        <meta name="description" content="">
+        <meta name="description" content="<?php echo trim(strip_tags($description)); ?>">
+        <meta name="Generator" content="Gitbook2Site">
+        <meta name="Copyright" content="PHPShop">
+        <meta name="Author" content="PHPShop"> 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="/template/<?php echo $_CONFIG['template']; ?>/style.css">
         <link rel="icon" href="/logo.avif">

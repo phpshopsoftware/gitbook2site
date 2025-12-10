@@ -3,7 +3,7 @@
 /**
  * GitBook2Site
  * @author PHPShop Software
- * @version 1.0
+ * @version 1.1
  * @copyright ИП Туренко Д.Л. 
  */
 
