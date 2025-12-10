@@ -73,7 +73,7 @@
         <div class="container-fluid" id="main">
 
             <div class="row">
-                <div class="col-md-3 hidden-xs" id="menu">
+                <div class="col-md-3 hidden-xs hide-scrollbar" id="menu">
                     <div>
 
                         <?php echo $menu; ?>
@@ -81,7 +81,7 @@
                     </div>
 
                 </div>
-                <div class="col-md-7 col-xs-12" id="content">
+                <div class="col-md-7 col-xs-12" id="content-main">
 
 
                     <?php echo $breadcrumb . $html; ?></div>

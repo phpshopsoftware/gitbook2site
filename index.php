@@ -121,6 +121,16 @@ if (preg_match_all('/{% content-ref url="(.*?)" %}(\s*)(.*?)(\s*){% endcontent-r
         }
 }
 
+// embed
+if (preg_match_all('/{% embed url="<a href="(.*?)">(.*?)" %}/', $html, $matchs)) {
+    
+    if (is_array($matchs[1]))
+        foreach ($matchs[1] as $k => $text) {
+            $element = '<div class="panel panel-default"><div class="panel-body"><div class="embed-responsive embed-responsive-16by9"><video class="embed-responsive-item" src="'.$text.'" controls style="max-height:500px"></video></div></div></div>';
+            $html = str_replace($matchs[0][$k], $element, $html);
+        }
+}
+
 // tabs
 if (preg_match_all('/{% tabs %}(.*?){% endtabs %}/s', $html, $matchs_tabs)) {
 
@@ -162,7 +172,7 @@ if (preg_match_all('/{% tabs %}(.*?){% endtabs %}/s', $html, $matchs_tabs)) {
     }
 }
 
-$html = str_replace(['<img ', '<table>', '{% hint style="info" %}', '{% endhint %}'], ['<img class="img-responsive" ', '<table class="table table-striped table-responsive table-bordered">', '', ''], $html);
+$html = str_replace(['<img ', '<table>', '{% hint style="info" %}', '{% endhint %}'], ['<img class="img-responsive img-rounded" ', '<table class="table table-striped table-responsive table-bordered">', '', ''], $html);
 
 // Подпапки
 if (strlen($html) < 1000) {

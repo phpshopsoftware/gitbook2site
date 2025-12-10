@@ -1,6 +1,7 @@
 html {
     position: relative;
     min-height: 100%;
+    scrollbar-color: rgb(var(--tint-7))transparent;
 }
 body {
     margin-bottom: 10px;
@@ -22,6 +23,10 @@ h3 {
     font-size: 20px;
 }
 
+h3 {
+    font-size: 18px;
+}
+
 
 .popover-content {
     font-size: 14px;
@@ -38,6 +43,17 @@ a .glyphicon{
     max-height: calc(100vh - 100px);
     overflow-y:scroll; 
 }
+.hide-scrollbar {
+    scrollbar-color:transparent transparent;
+    transition:scrollbar-color .2s ease-in-out;
+    scrollbar-width: thin;
+
+}
+
+.hide-scrollbar:hover {
+    scrollbar-color:unset;
+}
+
 
 #menu h2{
     font-size:17px;
@@ -85,14 +101,13 @@ a .glyphicon{
     float: right;
 }
 
-#content{
+#content-main{
     padding-left:45px;
     padding-right:45px;
 
 }
 
-
-#content > h1:nth-of-type(2), #content > hr:first-of-type{
+#content-main > h1:nth-of-type(2), #content-main > hr:first-of-type{
     display: none;
 }
 
@@ -128,8 +143,13 @@ mark{
 }
 
 a.link{
-    color: #ccc;
+    color: transparent;
 }
+
+h2:hover > a.link, h3:hover > a.link,h4:hover > a.link{
+    color:#ccc;
+}
+
 
 #main{
     margin-top:80px;
@@ -164,7 +184,7 @@ ul.nav-stacked ul.nav-stacked{
         margin-top:0px;
     }
 
-    #content{
+    #content-main{
         padding: 15px;
     }
 
