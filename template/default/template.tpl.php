@@ -4,14 +4,22 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title><?php echo $title; ?> | <?php echo $_CONFIG['brand']; ?></title>
+        <title><?php echo $title; ?> - <?php echo $_CONFIG['brand']; ?></title>
         <meta name="description" content="<?php echo trim(strip_tags($description)); ?>">
         <meta name="Generator" content="Gitbook2Site">
         <meta name="Copyright" content="PHPShop">
-        <meta name="Author" content="PHPShop"> 
+        <meta name="Author" content="PHPShop">
+        
+        <meta property="og:title" content="<?php echo $title; ?> | <?php echo $_CONFIG['brand']; ?>">
+        <meta property="og:url" content="https://<?php echo $_SERVER['SERVER_NAME'].parse_url($_SERVER['REQUEST_URI'])['path']; ?>">
+        <meta property="og:image" content="https://<?php echo $_SERVER['SERVER_NAME']?>/help-main/.gitbook/assets/main_flow.png">
+        <meta property="og:type" content="website">
+        <meta property="og:description" content="<?php echo trim(strip_tags($description)); ?>">
+        
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="/template/<?php echo $_CONFIG['template']; ?>/style.css">
         <link rel="icon" href="/logo.avif">
+        <link rel="canonical" href="https://<?php echo $_SERVER['SERVER_NAME'].parse_url($_SERVER['REQUEST_URI'])['path']; ?>">
     </head>
     <body role="document">
         <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>

@@ -177,7 +177,8 @@ ul.nav-stacked ul.nav-stacked{
 @media (max-width: 768px) {
 
     a.link {
-        display: none;
+        display: block;
+        width: 0px;
     }
 
     #main{

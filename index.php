@@ -3,10 +3,9 @@
 /**
  * GitBook2Site
  * @author PHPShop Software
- * @version 1.1
+ * @version 1.2
  * @copyright ИП Туренко Д.Л. 
  */
-
 include "./config.php";
 include "./lib/parsedown/Parsedown.php";
 
@@ -32,30 +31,44 @@ elseif ($path == '/about') {
         $filename = $sourse . $path . '/README.md';
     else
         $filename = $sourse . $path . '.md';
-
-    $file = file($filename);
+}
+if (file_exists($filename)) {
+    $content = file_get_contents($filename);
 }
 
-if (file_exists($filename))
-    $content = file_get_contents($filename);
+$parent_path = $sourse . pathinfo($_SERVER['REQUEST_URI'], PATHINFO_DIRNAME) . '/README.md';
+$parent_path2 = $sourse . pathinfo($_SERVER['REQUEST_URI'], PATHINFO_DIRNAME) . pathinfo($_SERVER['REQUEST_URI'], PATHINFO_DIRNAME) . '.md';
 
-if (file_exists($sourse . $path . '/../README.md')) {
-    $parent = file_get_contents($sourse . $path . '/../README.md');
+if ((file_exists($parent_path) or file_exists($parent_path2))and pathinfo($_SERVER['REQUEST_URI'], PATHINFO_DIRNAME) != '/') {
+
+    if (file_exists($parent_path)) {
+        $parent = file_get_contents($parent_path);
+        $breadcrumb_url = $path . '/../';
+    } elseif (file_exists($parent_path2)) {
+        $parent = file_get_contents($parent_path2);
+        $breadcrumb_url = pathinfo($_SERVER['REQUEST_URI'], PATHINFO_DIRNAME) . '/';
+    }
 
     // title
     if (preg_match_all('/\# (.+)/', $parent, $matchs)) {
-
         $breadcrumb_name = $matchs[1][0];
     }
 
-    if ($path != '/')
-        $breadcrumb_parent = '<li><a href="' . $path . '/../">' . str_replace(['# '], [''], $breadcrumb_name) . '</a></li>';
+    if ($path != '/') {
+        $breadcrumb_parent = '<li itemprop="itemListElement" itemscope  itemtype="https://schema.org/ListItem">'
+                . '<a itemprop="item" href="https://' . $_SERVER['SERVER_NAME'] . $breadcrumb_url . '"><span itemprop="name">' . str_replace(['# '], [''], $breadcrumb_name) . '</span></a><meta itemprop="position" content="2"/></li>';
+    }
 }
 
 // title
 if (preg_match_all('/\# (.+)/', $content, $matchs)) {
 
-    $description = $title = $matchs[1][0];
+    $description = $title = $name = $matchs[1][0];
+
+    if (!empty($breadcrumb_name)) {
+        $title .= ' - ' . str_replace(['# '], [''], $breadcrumb_name);
+        $description = $title;
+    }
 
     if (is_array($matchs[1]) and count($matchs[1]) > 1)
         foreach ($matchs[1] as $nav) {
@@ -71,10 +84,23 @@ if (getenv("COMSPEC"))
 else
     $content = str_replace(['.gitbook/', $_CONFIG['site'], '.md'], [$sourse . '.gitbook/', 'https://' . $_SERVER['SERVER_NAME'], ''], $content);
 
+
 // banner
 if (preg_match('/cover: (.+)\scoverY: (.+)/', $content, $matchs)) {
     $element = '<img src="' . $matchs[1] . '" class="img-responsive hidden-xs">';
+    $banner = $matchs[1];
     $content = str_replace($matchs[0], $element, $content);
+}
+
+// image popup
+if (preg_match_all('/\[\^[1-9]\]: (.+)/', $content, $matchs)) {
+    if (is_array($matchs[0])) {
+        $k = 1;
+        foreach ($matchs[0] as $k => $text) {
+            $content = str_replace([$matchs[0][$k], '[^' . $k . ']'], ['', ''], $content);
+            $k++;
+        }
+    }
 }
 
 // image list
@@ -123,23 +149,35 @@ if (preg_match_all('/{% content-ref url="(.*?)" %}(\s*)(.*?)(\s*){% endcontent-r
 
 // embed
 if (preg_match_all('/{% embed url="<a href="(.*?)">(.*?)" %}/', $html, $matchs)) {
-    
+
     if (is_array($matchs[1]))
         foreach ($matchs[1] as $k => $text) {
-            $element = '<div class="panel panel-default"><div class="panel-body"><div class="embed-responsive embed-responsive-16by9"><video class="embed-responsive-item" src="'.$text.'" controls style="max-height:500px"></video></div></div></div>';
+
+            // video
+            if (in_array(pathinfo($text, PATHINFO_EXTENSION), ['mp4', 'mov']))
+                $element = '<div class="panel panel-default"><div class="panel-body"><div class="embed-responsive embed-responsive-16by9"><video class="embed-responsive-item" src="' . $text . '" controls style="max-height:500px"></video></div></div></div>';
+            // iframe
+            else
+                $element = '<div class="panel panel-default"><div class="panel-body"><a href="' . $text . '" target="_blank"><span class="glyphicon glyphicon-share-alt"></span>Перейти</a></div></div>';
+
             $html = str_replace($matchs[0][$k], $element, $html);
         }
 }
 
 // tabs
+$ti = 1;
 if (preg_match_all('/{% tabs %}(.*?){% endtabs %}/s', $html, $matchs_tabs)) {
 
     if (is_array($matchs_tabs[1])) {
-        foreach ($matchs_tabs[1] as $tabs) {
+        foreach ($matchs_tabs[1] as $kt=>$tabs) {
 
             if (preg_match_all('/{% tab title="(.*?)" %}(.*?){% endtab %}/s', $tabs, $matchs)) {
 
-                if (is_array($matchs[2]))
+                if (is_array($matchs[2])) {
+                    $tablist = null;
+                    $tabcontent = null;
+
+
                     foreach ($matchs[2] as $k => $text) {
 
                         if ($k == 0)
@@ -147,12 +185,14 @@ if (preg_match_all('/{% tabs %}(.*?){% endtabs %}/s', $html, $matchs_tabs)) {
                         else
                             $class = null;
 
-                        $tablist .= '<li role="presentation" class="' . $class . '"><a href="#tab_' . $k . '" aria-controls="home" role="tab" data-toggle="tab">' . $matchs[1][$k] . '</a></li>';
+                        $tablist .= '<li role="presentation" class="' . $class . '"><a href="#tab_' . $ti . '" aria-controls="home" role="tab" data-toggle="tab">' . $matchs[1][$k] . '</a></li>';
 
-                        $tabcontent .= '<div role="tabpanel" class="tab-pane ' . $class . '" id="tab_' . $k . '">' . $Parsedown->text($text) . '</div>';
+                        $tabcontent .= '<div role="tabpanel" class="tab-pane ' . $class . '" id="tab_' . $ti . '">' . $Parsedown->text($text) . '</div>';
+                        $GLOBALS['ti'] ++;
                     }
 
-                $element = '<div>
+
+                    $element_tab[$kt] = '<div>
 
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">' . $tablist . '</ul>
@@ -161,22 +201,25 @@ if (preg_match_all('/{% tabs %}(.*?){% endtabs %}/s', $html, $matchs_tabs)) {
   <div class="tab-content">' . $tabcontent . '</div>
 
         </div>';
+                }
             }
         }
     }
-
+    
     if (is_array($matchs_tabs[0])) {
         foreach ($matchs_tabs[0] as $k => $tabs) {
-            $html = str_replace($matchs_tabs[0][$k], $element, $html);
+            $html = str_replace($matchs_tabs[0][$k], $element_tab[$k], $html);
         }
     }
 }
 
-$html = str_replace(['<img ', '<table>', '{% hint style="info" %}', '{% endhint %}'], ['<img class="img-responsive img-rounded" ', '<table class="table table-striped table-responsive table-bordered">', '', ''], $html);
+$html = str_replace(['<img ', '<table>', '{% hint style="info" %}', '{% endhint %}', 'data-view="cards"'], ['<img class="img-responsive img-rounded" ', '<table class="table table-striped table-responsive table-bordered">', '', '', 'class="table table-striped table-responsive table-bordered"'], $html);
 
 // Подпапки
 if (strlen($html) < 1000) {
     if ($dh = @opendir($sourse . $path)) {
+
+
         while (($file = readdir($dh)) !== false) {
             if ($file != "." and $file != ".." and $file != 'README.md') {
 
@@ -204,6 +247,10 @@ if (strlen($html) < 1000) {
                     if (preg_match_all('/\# (.+)/', $name, $matchs)) {
 
                         $name = $matchs[1][0];
+
+
+                        if (str_replace("/", "", $path) == str_replace(".md", "", $file))
+                            $title = $name;
                     }
 
                     if (empty($name))
@@ -224,11 +271,27 @@ if (strlen($html) < 1000) {
 }
 
 // Хлебны крошки
-$breadcrumb = '<ol class="breadcrumb hidden-xs">
+if (empty($breadcrumb_parent))
+    $breadcrumb_position = 1;
+else
+    $breadcrumb_position = 2;
+
+
+$breadcrumb = '<ol class="breadcrumb hidden-xs" itemscope itemtype="https://schema.org/BreadcrumbList">
    <li><a href="/"><span class="glyphicon glyphicon-home"></span></a></li>
    ' . $breadcrumb_parent . '
-   <li class="active">' . $title . '</li>
+   <li class="active" itemprop="itemListElement" itemscope  itemtype="https://schema.org/ListItem"><span itemprop="name">' . $name . '</span>
+       <meta itemprop="item" href="https://' . $_SERVER['SERVER_NAME'] . $path . '" />
+       <meta itemprop="position" content="' . $breadcrumb_position . '"/>
+   </li>
    </ol>';
+
+
+if (empty($html)) {
+    header("HTTP/1.0 404 Not Found");
+    header("Status: 404 Not Found");
+    $html = $Parsedown->text($_CONFIG['404']);
+}
 
 // Шаблон дизайна
 include_once './template/' . $_CONFIG['template'] . '/template.tpl.php';
