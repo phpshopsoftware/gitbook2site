@@ -69,13 +69,21 @@ if (preg_match_all('/\# (.+)/', $content, $matchs)) {
         $title .= ' - ' . str_replace(['# '], [''], $breadcrumb_name);
         $description = $title;
     }
+}
+
+// navigation
+if (preg_match_all('/\##(.+)/', $content, $matchs)) {
 
     if (is_array($matchs[1]) and count($matchs[1]) > 1)
         foreach ($matchs[1] as $nav) {
-            if (strstr($nav, '*'))
-                $navigation .= '<li role="presentation"><a href="#' . toLatin($nav) . '" class="menu-2">' . str_replace('*', '', $nav) . '</a></li>';
-            else
-                $navigation .= '<li role="presentation"><a href="#' . toLatin($nav) . '" class="menu-1">' . $nav . '</a></li>';
+
+            if (!stristr($nav, '&#x20;')) {
+
+                if (strstr($nav, '#'))
+                    $navigation .= '<li role="presentation"><a href="#' . toLatin(str_replace(['#','*'], '', $nav)) . '" class="menu-2">' . str_replace(['#','*'], '', $nav) . '</a></li>';
+                else
+                    $navigation .= '<li role="presentation"><a href="#' . toLatin(str_replace(['#','*'], '', $nav)) . '" class="menu-1">' . str_replace(['#','*'], '', $nav) . '</a></li>';
+            }
         }
 }
 
@@ -125,7 +133,24 @@ $menu_content = str_replace(['.md', '(', 'Table of contents', 'README'], ['', '(
 $html = $Parsedown->text($content);
 
 $menu = $Parsedown->text($menu_content);
-$menu = str_replace(['<ul>'], ['<ul class="nav nav-pills nav-stacked">'], $menu);
+$menu = $menu_mobile= str_replace(['<ul>'], ['<ul class="nav nav-pills nav-stacked">'], $menu);
+
+// menu scroll  history
+if (preg_match_all('/<a href="(.*?)">(.*?)<\/a>/', $menu, $matchs)) {
+
+   if (is_array($matchs[1]))
+        foreach ($matchs[1] as $k => $text) {
+       
+           if($path == $matchs[1][$k] and $path !='/')
+               $menu_active = ' class="active" ';
+           else $menu_active = null;
+
+            $element = '<a href="' . $matchs[1][$k] . '" '. $menu_active.' id="'.str_replace(['/','-','.'],'',$matchs[1][$k]).'">' . $matchs[2][$k] . '</a>';
+
+            $menu = str_replace($matchs[0][$k], $element, $menu);
+        }
+    
+}
 
 // hint
 if (preg_match_all('/{% hint style="(.*?)" %}(\s*)(.*?)(\s*){% endhint %}/s', $html, $matchs)) {
@@ -142,7 +167,7 @@ if (preg_match_all('/{% content-ref url="(.*?)" %}(\s*)(.*?)(\s*){% endcontent-r
 
     if (is_array($matchs[3]))
         foreach ($matchs[3] as $k => $text) {
-            $element = '<a href="' . $matchs[1][$k] . '"><div class="panel panel-default"><div class="panel-body"><span class="glyphicon glyphicon-menu-right pull-right"></span>' . str_replace('.md', '', $text) . '</div></div></a>';
+            $element = '<a href="' . $matchs[1][$k] . '"><div class="panel panel-default"><div class="panel-body"><span class="glyphicon glyphicon-menu-right pull-right"></span><span class="glyphicon glyphicon-share-alt"></span>'.$text.'</div></div></a>';
             $html = str_replace($matchs[0][$k], $element, $html);
         }
 }
@@ -169,7 +194,7 @@ $ti = 1;
 if (preg_match_all('/{% tabs %}(.*?){% endtabs %}/s', $html, $matchs_tabs)) {
 
     if (is_array($matchs_tabs[1])) {
-        foreach ($matchs_tabs[1] as $kt=>$tabs) {
+        foreach ($matchs_tabs[1] as $kt => $tabs) {
 
             if (preg_match_all('/{% tab title="(.*?)" %}(.*?){% endtab %}/s', $tabs, $matchs)) {
 
@@ -205,7 +230,7 @@ if (preg_match_all('/{% tabs %}(.*?){% endtabs %}/s', $html, $matchs_tabs)) {
             }
         }
     }
-    
+
     if (is_array($matchs_tabs[0])) {
         foreach ($matchs_tabs[0] as $k => $tabs) {
             $html = str_replace($matchs_tabs[0][$k], $element_tab[$k], $html);
@@ -213,7 +238,7 @@ if (preg_match_all('/{% tabs %}(.*?){% endtabs %}/s', $html, $matchs_tabs)) {
     }
 }
 
-$html = str_replace(['<img ', '<table>', '{% hint style="info" %}', '{% endhint %}', 'data-view="cards"'], ['<img class="img-responsive img-rounded" ', '<table class="table table-striped table-responsive table-bordered">', '', '', 'class="table table-striped table-responsive table-bordered"'], $html);
+$html = str_replace(['<img ', '<table>', '{% hint style="info" %}', '{% endhint %}', 'data-view="cards"','\\'], ['<img class="img-responsive img-rounded" ', '<table class="table table-striped table-responsive table-bordered">', '', '', 'class="table table-striped table-responsive table-bordered"','<br>'], $html);
 
 // Подпапки
 if (strlen($html) < 1000) {
@@ -276,6 +301,13 @@ if (empty($breadcrumb_parent))
 else
     $breadcrumb_position = 2;
 
+if (empty($html)) {
+    header("HTTP/1.0 404 Not Found");
+    header("Status: 404 Not Found");
+    $html = $Parsedown->text($_CONFIG['404']);
+    $name =  $title = '404 Not Found';
+}
+
 
 $breadcrumb = '<ol class="breadcrumb hidden-xs" itemscope itemtype="https://schema.org/BreadcrumbList">
    <li><a href="/"><span class="glyphicon glyphicon-home"></span></a></li>
@@ -286,12 +318,6 @@ $breadcrumb = '<ol class="breadcrumb hidden-xs" itemscope itemtype="https://sche
    </li>
    </ol>';
 
-
-if (empty($html)) {
-    header("HTTP/1.0 404 Not Found");
-    header("Status: 404 Not Found");
-    $html = $Parsedown->text($_CONFIG['404']);
-}
 
 // Шаблон дизайна
 include_once './template/' . $_CONFIG['template'] . '/template.tpl.php';

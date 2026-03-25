@@ -560,7 +560,7 @@ class Parsedown
                 'name' => 'h' . $level,
                 'handler' => array(
                     'function' => 'lineElements',
-                    'argument' => '<a name="'.toLatin($text).'" href="#'.toLatin($text).'" class="link">#</a>'.$text,
+                    'argument' => '<a name="'.toLatin($text).'" href="#'.toLatin($text).'" class="link" id="'.toLatin($text).'">#</a>'.$text,
                     'destination' => 'elements',
                 )
             ),

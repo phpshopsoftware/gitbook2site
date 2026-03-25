@@ -6,4 +6,4 @@ $_CONFIG['site']='https://docs.phpshop.ru';
 $_CONFIG['template']='default';
 $_CONFIG['404']='# Страница не найдена
 
-Попробуйте воспользоваться 🔍поиском или спросить нас в 💬[Чате](https://t.me/myphpshop_bot)';
+Попробуйте воспользоваться 🔍поиском или спросить нас в 💬[Поддержке](https://help.phpshop.ru/new)';

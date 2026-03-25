@@ -15,8 +15,6 @@ $(document).ready(function () {
             window.location.href = $(this).attr('href');
     });
 
-
-
     $('.nav-stacked li a').each(function () {
         if ($(this).next('ul').hasClass('nav-stacked'))
             $(this).append('<span class="glyphicon glyphicon-menu-right pull-right small"></span>');
@@ -114,5 +112,22 @@ $(document).ready(function () {
         var a = $(window).scrollTop() + 50;
         $('#menu').css('max-height', 700 + a);
     });
+
+    // highlight
+    document.querySelectorAll('pre code').forEach(el => {
+        hljs.highlightElement(el);
+    });
+
+    $('.nav-stacked li a.active').each(function () {
+        $(this).closest('.nav-stacked').css('display', 'block');
+    });
+
+    // menu scroll history
+    if ($('.nav-stacked li a.active').length) {
+        $('#menu').animate({
+            scrollTop: $('.nav-stacked li a.active').offset().top - $('#menu').offset().top +
+                    $('#menu').scrollTop()
+        });
+    }
 
 });

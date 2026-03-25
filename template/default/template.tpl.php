@@ -9,21 +9,27 @@
         <meta name="Generator" content="Gitbook2Site">
         <meta name="Copyright" content="PHPShop">
         <meta name="Author" content="PHPShop">
-        
+
         <meta property="og:title" content="<?php echo $title; ?> | <?php echo $_CONFIG['brand']; ?>">
-        <meta property="og:url" content="https://<?php echo $_SERVER['SERVER_NAME'].parse_url($_SERVER['REQUEST_URI'])['path']; ?>">
-        <meta property="og:image" content="https://<?php echo $_SERVER['SERVER_NAME']?>/help-main/.gitbook/assets/main_flow.png">
+        <meta property="og:url" content="https://<?php echo $_SERVER['SERVER_NAME'] . parse_url($_SERVER['REQUEST_URI'])['path']; ?>">
+        <meta property="og:image" content="https://<?php echo $_SERVER['SERVER_NAME'] ?>/help-main/.gitbook/assets/main_flow.png">
         <meta property="og:type" content="website">
         <meta property="og:description" content="<?php echo trim(strip_tags($description)); ?>">
-        
+
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="/template/<?php echo $_CONFIG['template']; ?>/style.css">
-        <link rel="icon" href="/logo.avif">
-        <link rel="canonical" href="https://<?php echo $_SERVER['SERVER_NAME'].parse_url($_SERVER['REQUEST_URI'])['path']; ?>">
+        <link rel="icon" href="/logo.png">
+        <link rel="canonical" href="https://<?php echo $_SERVER['SERVER_NAME'] . parse_url($_SERVER['REQUEST_URI'])['path']; ?>">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/mono-blue.min.css">
+        
     </head>
-    <body role="document">
+    <body role="document" data-spy="scroll" data-target="#content-menu">
         <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/php.min.js"></script>
+        
         <script src="/template/<?php echo $_CONFIG['template']; ?>/js.js"></script> 
 
         <nav class="navbar navbar-default visible-xs">
@@ -50,7 +56,7 @@
 
                 <div class="collapse navbar-collapse" id="navbar">
                     <ul class="nav navbar-nav" id="mobmenu">
-                        <?php echo $menu; ?>
+                        <?php echo $menu_mobile; ?>
                         </li>
                     </ul>
 
@@ -63,7 +69,7 @@
                 <div class="container-fluid">
                     <div class="row hidden-xs">
                         <div class="col-md-3" style="margin:15px">
-                            <a href="/" class="logo" ><img src="/logo.avif" style="margin-right:10px"><?php echo $_CONFIG['brand']; ?></a>
+                            <a href="/" class="logo" ><img src="/logo.png" style="margin-right:10px"><?php echo $_CONFIG['brand']; ?></a>
                         </div>
 
                         <div class="col-md-4">
@@ -88,6 +94,7 @@
                     <div>
 
                         <?php echo $menu; ?>
+                        <a id="test"></a>
 
                     </div>
 
@@ -95,9 +102,9 @@
                 <div class="col-md-7 col-xs-12" id="content-main">
 
 
-                    <?php echo $breadcrumb . $html; ?></div>
-
-                <div class="col-md-2 hidden-xs" id="content-menu"><div data-spy="affix" data-offset-top="10" data-offset-bottom="100">
+                    <?php echo $breadcrumb . $html; ?>
+                </div>
+                <div class="col-md-2 hidden-xs" id="content-menu"><div>
                         <ul data-spy="affix" data-offset-top="10" data-offset-bottom="100" class="nav nav-pills nav-stacked">
                             <?php echo $navigation; ?>
                         </ul>
